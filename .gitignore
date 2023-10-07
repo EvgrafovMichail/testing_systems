@@ -5,3 +5,5 @@
 # files for testing
 *.json
 
+# Python folders
+__pycache__
