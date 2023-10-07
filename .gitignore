@@ -1,0 +1,7 @@
+# folders for testing
+/reports
+/submissions
+
+# files for testing
+*.json
+
