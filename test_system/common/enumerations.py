@@ -22,4 +22,12 @@ class SolutionInfoFields(Enum):
     SOLUTION_TYPE = 'solution type'
     TEST_PASSED = 'test passed'
     TEST_FAILED = 'test failed'
+    TEST_CASES_INFO = 'test cases info'
     SUCCESS_FACTOR = 'success factor'
+
+
+class TestCaseInfo(Enum):
+    TEST_ID = 'test id'
+    INPUT = 'input'
+    OUTPUT = 'output'
+    EXPECTED = 'expected'

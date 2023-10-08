@@ -2,7 +2,7 @@ import importlib.util
 import json
 import os
 
-from typing import Sequence, Any
+from typing import Any
 from datetime import datetime
 from types import ModuleType
 
@@ -10,19 +10,15 @@ from test_system.common.enumerations import (
     SolutionTypes as st,
     TestFields as tf,
     SolutionInfoFields as sif,
+    TestCaseInfo as tci,
     AnswerFields as af,
 )
 
 
 class Tester:
-    _task_names: list[str]
     _path_to_reports: str
 
-    def __init__(
-        self, task_names: Sequence[str], path_to_report: str = ""
-    ) -> None:
-        self._task_names = list(task_names)
-
+    def __init__(self, path_to_report: str = "") -> None:
         if path_to_report:
             self._path_to_reports = str(path_to_report)
 
@@ -33,25 +29,23 @@ class Tester:
             os.makedirs(self._path_to_reports)
 
     def get_report(
-        self, path_to_answers: str, path_to_testcases: str
+        self, path_to_answers: str, testcases: dict[str, list[Any]]
     ) -> None:
         if not os.path.exists(path_to_answers):
             raise RuntimeError(
                 f'path to answers: {path_to_answers} doesn\'t exist'
             )
 
-        if not os.path.exists(path_to_testcases):
+        if not isinstance(testcases, dict):
             raise RuntimeError(
-                f'path to testcases: {path_to_testcases} doesn\'t exist'
+                f'invalid testcases type: {type(testcases).__name__}; '
+                'dict type was expected; '
             )
 
         report_id = self._get_report_id()
         path_to_report = os.path.join(
             self._path_to_reports, f'{report_id}.json'
         )
-
-        with open(path_to_testcases, 'r') as file:
-            testcases = json.load(file)
 
         reports = self._get_reports(path_to_answers, testcases)
 
@@ -91,10 +85,7 @@ class Tester:
             af.TESTS_INFO.value: []
         }
 
-        for task_name in self._task_names:
-            if task_name not in testcases:
-                continue
-
+        for task_name in testcases:
             solution_info = self._get_solution_info(
                 task_name, answer, testcases[task_name]
             )
@@ -109,8 +100,7 @@ class Tester:
         solution = answer.__dict__.get(task_name)
         info = {
             sif.TASK_NAME.value: task_name,
-            sif.SOLUTION_TYPE.value: st.NOT_SOLVED.value,
-            sif.TEST_PASSED.value: [], sif.TEST_FAILED.value: []
+            sif.SOLUTION_TYPE.value: st.NOT_SOLVED.value
         }
 
         if not solution:
@@ -120,10 +110,17 @@ class Tester:
             output = solution(*test[tf.INPUT.value])
 
             if output == test[tf.OUTPUT.value]:
-                info[sif.TEST_PASSED.value].append(i)
+                info.setdefault(sif.TEST_PASSED.value, []).append(i)
 
             else:
-                info[sif.TEST_FAILED.value].append(i)
+                info.setdefault(sif.TEST_FAILED.value, []).append(i)
+
+            info.setdefault(sif.TEST_CASES_INFO.value, []).append({
+                tci.TEST_ID.value: i,
+                tci.INPUT.value: ', '.join(map(str, test[tf.INPUT.value])),
+                tci.OUTPUT.value: str(output),
+                tci.EXPECTED.value: str(test[tf.OUTPUT.value])
+            })
 
         success_factor = len(info[sif.TEST_PASSED.value]) / len(testcases)
         info[sif.SUCCESS_FACTOR.value] = success_factor

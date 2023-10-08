@@ -7,3 +7,4 @@
 
 # Python folders
 __pycache__
+*testcases*.py
