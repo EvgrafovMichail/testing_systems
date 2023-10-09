@@ -107,7 +107,11 @@ class Tester:
             return info
 
         for i, test in enumerate(testcases, start=1):
-            output = solution(*test[tf.INPUT.value])
+            try:
+                output = solution(*test[tf.INPUT.value])
+
+            except:
+                info[sif.SOLUTION_TYPE.value] = st.ERROR.value
 
             if output == test[tf.OUTPUT.value]:
                 info.setdefault(sif.TEST_PASSED.value, []).append(i)
