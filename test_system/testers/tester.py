@@ -123,7 +123,7 @@ class Tester:
             })
 
         success_factor = len(info[sif.TEST_PASSED.value]) / len(testcases)
-        info[sif.SUCCESS_FACTOR.value] = success_factor
+        info[sif.SUCCESS_FACTOR.value] = round(success_factor, 2)
 
         if success_factor == 1:
             info[sif.SOLUTION_TYPE.value] = st.CORRECT_SOLUTION.value
