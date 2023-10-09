@@ -112,6 +112,7 @@ class Tester:
 
             except:
                 info[sif.SOLUTION_TYPE.value] = st.ERROR.value
+                continue
 
             if output == test[tf.OUTPUT.value]:
                 info.setdefault(sif.TEST_PASSED.value, []).append(i)
