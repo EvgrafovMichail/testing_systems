@@ -7,4 +7,7 @@
 
 # Python folders
 __pycache__
+venv
+
+# Python files
 *testcases*.py
