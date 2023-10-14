@@ -5,6 +5,7 @@ exclude =
     __pycache__,
     venv,
     submissions,
-    src/main.py
+    src/main.py,
+    src/testcases
 max-complexity = 10
 max-line-length = 100
