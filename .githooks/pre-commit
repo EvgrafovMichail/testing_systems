@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo "[INFO]: start pre-commit script"
 echo "[INFO]: flake8 stage"
 
