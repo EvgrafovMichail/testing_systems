@@ -11,3 +11,4 @@ venv
 
 # Python files
 *testcases*.py
+/src/main.py
