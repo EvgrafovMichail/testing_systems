@@ -94,12 +94,13 @@ class Tester:
         for path in pathes:
             answer_name = os.path.split(path)[-1].replace(extension, '')
 
-            spec = importlib.util.spec_from_file_location(answer_name, path)
-            answer = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(answer)
+            with self._silence_mode():
+                spec = importlib.util.spec_from_file_location(answer_name, path)
+                answer = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(answer)
 
             report = self._get_solution_info(path, answer, testcases)
-            reports.append(report.model_dump(exclude_defaults=True))
+            reports.append(report.model_dump(exclude_none=True))
 
         return reports
 
@@ -124,7 +125,7 @@ class Tester:
     def _get_task_solution_info(
         self, task_name: str, answer: ModuleType,
         testcases: list[Any]
-    ) -> dict[str, Any]:
+    ) -> TaskSolutionInfo:
         solution = answer.__dict__.get(task_name)
         solution_type = st.NOT_SOLVED.value
         progress = 0
@@ -161,17 +162,20 @@ class Tester:
 
             else:
                 tests_failed = [] if not tests_failed else tests_failed
-                tests_failed.append(i)
+                tests_info = [] if not tests_info else tests_info
 
-            tests_info = [] if not tests_info else tests_info
-            tests_info.append(
-                TestCaseInfo(
-                    test_id=i,
-                    input=', '.join(map(str, test[tf.INPUT.value])),
-                    output=str(output),
-                    expected=str(test[tf.OUTPUT.value])
+                tests_failed.append(i)
+                tests_info.append(
+                    TestCaseInfo(
+                        test_id=i,
+                        input=', '.join(map(str, test[tf.INPUT.value])),
+                        output=str(output),
+                        expected=str(test[tf.OUTPUT.value])
+                    )
                 )
-            )
+
+        if tests_failed:
+            solution_type = st.INCORRECT_SOLUTION.value
 
         if tests_passed:
             progress = round(len(tests_passed) / len(testcases), 2)
