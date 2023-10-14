@@ -33,7 +33,7 @@ class Tester:
 
         else:
             self._path_to_reports = os.path.join('.', 'reports')
-        
+
         self._logger.info(
             f'use next folder for report saving: {self._path_to_reports}'
         )
@@ -61,7 +61,7 @@ class Tester:
 
             self._logger.error(error_msg)
             raise RuntimeError(error_msg)
-        
+
         self._logger.info(
             f'use next folder as answers source: {path_to_answers}'
         )
@@ -140,7 +140,7 @@ class Tester:
                 progress=progress,
                 solution_type=solution_type
             )
-        
+
         tests_passed, tests_failed = None, None
         tests_info = None
 
@@ -191,7 +191,7 @@ class Tester:
             tests_failed=tests_failed,
             tests_info=tests_info
         )
-    
+
     @contextlib.contextmanager
     def _silence_mode(self):
         stdout, sys.stdout = sys.stdout, None
