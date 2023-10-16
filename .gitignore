@@ -5,3 +5,10 @@
 # files for testing
 *.json
 
+# Python folders
+__pycache__
+venv
+
+# Python files
+*testcases*.py
+/src/main.py
